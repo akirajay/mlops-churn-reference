@@ -43,7 +43,7 @@ module storage 'modules/storage.bicep' = {
 module kv 'modules/keyvault.bicep' = {
   name: 'kv'
   params: {
-    name: 'kv-${suffix}-${uniqueString(resourceGroup().id)}'
+    name: 'kv${replace(suffix, '-', '')}${substring(uniqueString(resourceGroup().id), 0, 8)}'
     location: location
     tags: tags
   }
@@ -100,6 +100,7 @@ module compute 'modules/compute.bicep' = {
     workspaceName: ws.outputs.name
     location: location
     enableSpot: enableSpot
+    ciName: 'ci-akira-${envName}'
   }
 }
 

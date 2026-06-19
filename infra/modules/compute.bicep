@@ -1,6 +1,7 @@
 param workspaceName string
 param location string
 param enableSpot bool
+param ciName string = 'ci-akira'
 
 // AmlCompute training cluster — Knowledge §3
 resource cluster 'Microsoft.MachineLearningServices/workspaces/computes@2024-04-01' = {
@@ -23,7 +24,7 @@ resource cluster 'Microsoft.MachineLearningServices/workspaces/computes@2024-04-
 
 // Compute Instance — single-user dev workstation
 resource ci 'Microsoft.MachineLearningServices/workspaces/computes@2024-04-01' = {
-  name: '${workspaceName}/ci-akira'
+  name: '${workspaceName}/${ciName}'
   location: location
   properties: {
     computeType: 'ComputeInstance'
@@ -34,4 +35,4 @@ resource ci 'Microsoft.MachineLearningServices/workspaces/computes@2024-04-01' =
 }
 
 output clusterName string = 'cpu-cluster'
-output ciName string = 'ci-akira'
+output ciName string = ciName

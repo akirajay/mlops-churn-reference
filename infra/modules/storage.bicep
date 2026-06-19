@@ -9,7 +9,6 @@ resource sa 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   sku: { name: 'Standard_LRS' }
   kind: 'StorageV2'
   properties: {
-    isHnsEnabled: true            // ADLS Gen2 (knowledge §5.2: abfss://)
     minimumTlsVersion: 'TLS1_2'
     allowBlobPublicAccess: false
     publicNetworkAccess: 'Enabled' // PE will be added; keep enabled for first bootstrap
