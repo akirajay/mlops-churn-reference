@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+.azureml/
+outputs/
+mlruns/
+site/
+.bicep/
+*.bicep.json
