@@ -12,6 +12,11 @@ permissions:
   id-token: write     # OIDC
   contents: read
 
+# 防止连续 push 触发并发部署互相覆盖；部署中途不取消以免留下半成品资源
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -62,6 +67,9 @@ jobs:
   deploy-prod:
     needs: deploy-dev
     runs-on: ubuntu-latest
+    # prod 审批门禁：environment 的 Required reviewers 会在此暂停等待人工批准。
+    # OIDC subject 变为 repo:<owner/repo>:environment:prod，对应已存在的 federated credential。
+    environment: prod
     steps:
       - uses: actions/checkout@v4
       - uses: azure/login@v2
