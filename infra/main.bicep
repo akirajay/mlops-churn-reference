@@ -37,6 +37,7 @@ module storage 'modules/storage.bicep' = {
     name: 'st${replace(suffix, '-', '')}${uniqueString(resourceGroup().id)}'
     location: location
     tags: tags
+    deployerPrincipalId: deployerPrincipalId
   }
 }
 
