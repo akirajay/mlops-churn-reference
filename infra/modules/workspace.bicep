@@ -21,9 +21,30 @@ resource ws 'Microsoft.MachineLearningServices/workspaces@2024-04-01' = {
     containerRegistry: acrId
     applicationInsights: appInsightsId
     publicNetworkAccess: 'Enabled'        // bootstrap; tighten in §4 lab extension
+    // Use Entra ID (not account keys) for system datastores. Required because a
+    // subscription policy disables shared-key auth on storage accounts.
+    systemDatastoresAuthMode: 'Identity'
     managedNetwork: enableManagedVnet ? {
       isolationMode: 'AllowInternetOutbound'
     } : null
+  }
+}
+
+// Storage account that backs the workspace (existing; same RG) so we can grant
+// the workspace MSI blob data access for identity-based datastore operations.
+resource storageAcct 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
+  name: last(split(storageId, '/'))
+}
+
+var roleBlobDataContributor = 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+
+resource raWsBlob 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  scope: storageAcct
+  name: guid(storageAcct.id, ws.id, roleBlobDataContributor)
+  properties: {
+    principalId: ws.identity.principalId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', roleBlobDataContributor)
+    principalType: 'ServicePrincipal'
   }
 }
 

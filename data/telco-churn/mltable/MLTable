@@ -20,8 +20,7 @@ transformations:
       - columns: MonthlyCharges
         column_type: float
       - columns: TotalCharges
-        column_type:
-          to_string: {}     # raw has blanks; we coerce in code
+        column_type: string     # raw has blanks; we coerce in code
   - drop_columns:
       - customerID
   - filter: "col('tenure') > 0"
