@@ -60,5 +60,7 @@ jobs:
           done
 
       - name: Verify data assets exist
+        env:
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_OIDC_SUBSCRIPTION_ID }}
         run: |
           uv run pytest labs/02-data-and-job/verify -v --env=${ENV}
