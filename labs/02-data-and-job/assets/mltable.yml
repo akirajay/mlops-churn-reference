@@ -1,0 +1,6 @@
+$schema: https://azuremlschemas.azureedge.net/latest/data.schema.json
+type: mltable
+name: telco-churn-mltable
+version: "1"
+description: "Declarative blueprint — demonstrates §5.1 MLTable"
+path: ../../../data/telco-churn/mltable

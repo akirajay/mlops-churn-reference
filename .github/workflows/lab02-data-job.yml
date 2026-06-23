@@ -1,0 +1,64 @@
+name: Lab 02 - Data & Command Job
+
+on:
+  push:
+    paths:
+      - 'labs/02-data-and-job/**'
+      - 'data/telco-churn/**'
+      - '.github/workflows/lab02-data-job.yml'
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      env:
+        type: choice
+        options: [ dev, prod ]
+        default: dev
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  run-lab02:
+    runs-on: ubuntu-latest
+    env:
+      ENV: ${{ github.event.inputs.env || 'dev' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_OIDC_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_OIDC_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_OIDC_SUBSCRIPTION_ID }}
+
+      - name: Install az ml extension
+        run: az extension add --name ml -y
+
+      - name: Download dataset
+        run: uv run python data/telco-churn/download.py
+
+      - name: Register data assets
+        run: |
+          for f in uri_file uri_folder mltable; do
+            az ml data create -g rg-churn-${ENV} -w mlw-churn-${ENV} \
+              -f labs/02-data-and-job/assets/${f}.yml || true
+          done
+
+      - name: Submit Command Jobs (don't wait — Azure ML will track them)
+        run: |
+          for f in train_uri_file train_uri_folder train_mltable; do
+            az ml job create -g rg-churn-${ENV} -w mlw-churn-${ENV} \
+              -f labs/02-data-and-job/jobs/${f}.yml
+          done
+
+      - name: Verify data assets exist
+        run: |
+          uv run pytest labs/02-data-and-job/verify -v --env=${ENV}

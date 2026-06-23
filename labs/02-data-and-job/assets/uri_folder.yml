@@ -1,0 +1,6 @@
+$schema: https://azuremlschemas.azureedge.net/latest/data.schema.json
+type: uri_folder
+name: telco-churn-folder
+version: "1"
+description: "Folder with train.csv + test.csv — demonstrates §5.3 uri_folder"
+path: ../../../data/telco-churn/folder

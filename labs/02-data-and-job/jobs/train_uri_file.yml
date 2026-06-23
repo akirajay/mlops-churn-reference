@@ -1,0 +1,23 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+type: command
+display_name: lab02-train-uri-file
+experiment_name: lab02-data-and-job
+compute: azureml:cpu-cluster
+code: ../src
+environment:
+  image: mcr.microsoft.com/azureml/openmpi5.0-ubuntu24.04:latest
+  conda_file: ../src/conda.yml
+
+# ✅ §6 CORRECT: ${{inputs.x}} → runtime mount path
+command: >-
+  python train.py
+  --training_data ${{inputs.training_data}}
+  --asset_type uri_file
+  --max_iter 200
+  --c 1.0
+
+inputs:
+  training_data:
+    type: uri_file
+    path: azureml:telco-churn-file:1
+    mode: ro_mount

@@ -1,0 +1,27 @@
+# MLTable is a *declarative blueprint* (NOT storage). It defines how to
+# materialize raw files into a pandas/spark DataFrame at consume time.
+$schema: https://azuremlschemas.azureedge.net/latest/MLTable.schema.json
+type: mltable
+
+paths:
+  - file: ./telco-churn.csv
+
+transformations:
+  - read_delimited:
+      delimiter: ","
+      encoding: utf8
+      header: all_files_same_headers
+      empty_as_string: false
+  - convert_column_types:
+      - columns: SeniorCitizen
+        column_type: int
+      - columns: tenure
+        column_type: int
+      - columns: MonthlyCharges
+        column_type: float
+      - columns: TotalCharges
+        column_type:
+          to_string: {}     # raw has blanks; we coerce in code
+  - drop_columns:
+      - customerID
+  - filter: "col('tenure') > 0"

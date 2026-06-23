@@ -1,0 +1,6 @@
+$schema: https://azuremlschemas.azureedge.net/latest/data.schema.json
+type: uri_file
+name: telco-churn-file
+version: "1"
+description: "Single CSV — demonstrates §5.3 uri_file"
+path: ../../../data/telco-churn/raw/telco-churn.csv

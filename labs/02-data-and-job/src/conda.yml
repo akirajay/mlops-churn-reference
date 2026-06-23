@@ -1,0 +1,12 @@
+name: lab02-env
+channels: [conda-forge]
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - mlflow==2.16.0
+      - azureml-mlflow==1.57.0
+      - mltable==1.6.1
+      - pandas==2.2.2
+      - scikit-learn==1.5.1
+      - pyarrow==17.0.0
